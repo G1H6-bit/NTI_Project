@@ -1,0 +1,62 @@
+[
+  {
+    "id": "1",
+    "title": "Greek Salad",
+    "category": "Lunch",
+    "ingredients": [
+      "Cucumber",
+      "Tomato",
+      "Feta cheese",
+      "Olives",
+      "Olive oil"
+    ],
+    "steps": [
+      "Chop vegetables",
+      "Add feta and olives",
+      "Drizzle with olive oil"
+    ],
+    "cookTime": "10 minutes",
+    "difficulty": "Easy",
+    "isFavorite": false
+  },
+  {
+    "id": "2",
+    "title": "Pancakes",
+    "category": "Breakfast",
+    "ingredients": [
+      "Flour",
+      "Milk",
+      "Eggs",
+      "Sugar",
+      "Baking powder"
+    ],
+    "steps": [
+      "Mix dry ingredients",
+      "Add milk and eggs",
+      "Cook on pan until golden"
+    ],
+    "cookTime": "15 minutes",
+    "difficulty": "Easy",
+    "isFavorite": true
+  },
+  {
+    "id": "3",
+    "title": "Chocolate Cake",
+    "category": "Dessert",
+    "ingredients": [
+      "Flour",
+      "Cocoa powder",
+      "Sugar",
+      "Eggs",
+      "Butter"
+    ],
+    "steps": [
+      "Mix all ingredients",
+      "Pour into pan",
+      "Bake for 30 minutes"
+    ],
+    "cookTime": "45 minutes",
+    "difficulty": "Medium",
+    "isFavorite": false
+  }
+]
