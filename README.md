@@ -66,7 +66,7 @@ NTI_Project/
 ## ✨ Features
 
 **Authentication**
-- ✅ Register (with hashed passwords)
+- ✅ Signup (with hashed passwords)
 - ✅ Login (returns a JWT token)
 - ✅ Protected "get my profile" route
 
@@ -124,14 +124,82 @@ The API will be running at `http://localhost:5000`.
 
 ---
 
-## 📡 API Endpoints
+## 🔐 Authentication Module
 
-### Auth
+### What this module does
+Handles user registration and login for Tasty Share. Passwords are never stored in plain text — they're hashed with **bcryptjs** before saving to MongoDB. On successful signup or login, the server returns a **JWT token**, which the client must send on future requests (as a `Bearer` token) to access protected routes like creating, editing, or deleting recipes.
+
+### Chosen user roles
+| Role | Description |
+|------|--------------|
+| **chef** | Default role for any registered user. Can create, edit, and delete their own recipes. |
+| **admin** | Elevated role. Can manage all recipes, users, and categories (used for moderation). |
+
+### User model fields
+| Field | Type | Notes |
+|-------|------|-------|
+| `name` | String | Required |
+| `email` | String | Required, unique, lowercase |
+| `password` | String | Required, min 8 characters, hashed with bcrypt, hidden from API responses by default |
+| `role` | String | `"chef"` (default) or `"admin"` |
+| `profileImage` | String | Filename of uploaded profile picture (defaults to `default.jpg`) |
+| `favorites` | Array of Recipe IDs | Recipes the user has marked as favorite |
+| `createdAt` | Date | Auto-set when the user registers |
+
+### Auth Routes
+
 | Method | Endpoint | Description | Auth required |
 |--------|----------|--------------|----------------|
-| POST | `/api/v1/users/register` | Register a new user | No |
-| POST | `/api/v1/users/login` | Log in, returns a token | No |
-| GET | `/api/v1/users/me` | Get current logged-in user's profile | Yes |
+| POST | `/api/v1/users/signup` | Register a new user, returns a JWT token | No |
+| POST | `/api/v1/users/login` | Log in with email + password, returns a JWT token | No |
+| GET | `/api/v1/users/me` | Get the logged-in user's own profile | Yes (Bearer token) |
+
+**Example — Signup request body:**
+```json
+{
+  "name": "Ahmed Samir",
+  "email": "ahmed@example.com",
+  "password": "password123"
+}
+```
+
+**Example — Signup response:**
+```json
+{
+  "status": "success",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "data": {
+    "user": {
+      "_id": "66b1f2c3a4e5f6b7c8d9e0f1",
+      "name": "Ahmed Samir",
+      "email": "ahmed@example.com",
+      "role": "chef"
+    }
+  }
+}
+```
+
+**Example — Login request body:**
+```json
+{
+  "email": "ahmed@example.com",
+  "password": "password123"
+}
+```
+
+**Example — Accessing a protected route:**
+In Postman, go to the **Authorization** tab → Type: **Bearer Token** → paste the token from signup/login → send the request.
+```
+GET /api/v1/users/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+### How authorization is enforced
+The `protectRoute` middleware (in `middleware/auth-middleware.js`) checks for a valid token on protected routes. If missing or invalid, it returns `401 Unauthorized`. Recipe creation automatically attaches the logged-in user's ID as the recipe's `author`.
+
+---
+
+## 📡 Full API Endpoints
 
 ### Recipes
 | Method | Endpoint | Description | Auth required |
